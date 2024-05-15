@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/AirPL.iml" filepath="$PROJECT_DIR$/.idea/AirPL.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Barillet_Menadier/.idea/Barillet_Menadier.iml" filepath="$PROJECT_DIR$/../Barillet_Menadier/.idea/Barillet_Menadier.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/indiceATMO.iml" filepath="$PROJECT_DIR$/.idea/indiceATMO.iml" />
     </modules>
   </component>
 </project>
