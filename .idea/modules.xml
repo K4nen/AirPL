@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AirPL.iml" filepath="$PROJECT_DIR$/.idea/AirPL.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Barillet_Menadier/.idea/Barillet_Menadier.iml" filepath="$PROJECT_DIR$/../Barillet_Menadier/.idea/Barillet_Menadier.iml" />
     </modules>
   </component>
 </project>
