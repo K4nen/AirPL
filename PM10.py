@@ -5,27 +5,55 @@ import seaborn as sns
 
 
 def fetch_and_process_pm10_data():
-    # URL et paramètres de la requête
-    url = "https://data.airpl.org/api/v1/mesure/mensuelle/"
-    params = {
+    # URL de base
+    url = "https://data.airpl.org/api/v1/mesure/horaire/"
+
+    # Paramètres de base de la requête
+    base_params = {
         "code_configuration_de_mesure__code_point_de_prelevement__code_polluant": 24,
-        "date_heure_tu__range": "2021-1-1,2023-12-31",
+        "date_heure_tu__range": "2024-1-1,2024-3-31 23:00:00",
         "code_configuration_de_mesure__code_point_de_prelevement__code_station__code_commune__code_departement__in": "44,49,53,72,85",
         "export": "json"
     }
+    # Limite de résultats par requête
+    limit = 1000
+    offset = 0
 
-    # Récupérer les données
-    response = requests.get(url, params=params)
+    # DataFrame pour stocker tous les résultats
+    dfPM10 = pd.DataFrame()
 
-    if response.status_code == 200:
-        data = response.json()
-        dfPM10 = pd.DataFrame(data['results'])  # Adapter selon la structure des données JSON
+    while True:
+        # Mettre à jour les paramètres avec la limite et l'offset
+        params = base_params.copy()
+        params.update({
+            "limit": limit,
+            "offset": offset
+        })
 
-        # Sauvegarder le DataFrame pour utilisation ultérieure
-        dfPM10.to_pickle('PM10.pkl')
-    else:
-        print(f"Erreur {response.status_code}: {response.text}")
-        return None
+        # Récupérer les données
+        response = requests.get(url, params=params)
+
+        if response.status_code == 200:
+            data = response.json()
+            df_results = pd.DataFrame(data['results'])  # Adapter selon la structure des données JSON
+
+            # Ajouter les résultats au DataFrame principal
+            dfPM10 = pd.concat([dfPM10, df_results], ignore_index=True)
+
+            # Vérifier si le nombre de résultats récupérés est inférieur à la limite
+            if len(df_results) < limit:
+                break  # Arrêter la boucle si tous les enregistrements ont été récupérés
+
+            # Mettre à jour l'offset pour la prochaine itération
+            offset += limit
+        else:
+            print(f"Erreur {response.status_code}: {response.text}")
+            break
+
+    print(f"Total records retrieved: {len(dfPM10)}")
+
+    # Sauvegarder le DataFrame pour utilisation ultérieure
+    dfPM10.to_pickle('PM10.pkl')
 
     # Afficher les premières lignes du DataFrame
     print(dfPM10.head())
@@ -54,3 +82,5 @@ def fetch_and_process_pm10_data():
     print(dfPM10.dtypes)
 
     return dfPM10
+
+
