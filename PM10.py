@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from unidecode import unidecode
 
 
 def fetch_and_process_pm10_data():
@@ -12,7 +13,6 @@ def fetch_and_process_pm10_data():
     base_params = {
         "code_configuration_de_mesure__code_point_de_prelevement__code_polluant": 24,
         "date_heure_tu__range": "2024-1-1,2024-3-31 23:00:00",
-        "code_configuration_de_mesure__code_point_de_prelevement__code_station__code_commune__code_departement__in": "44,49,53,72,85",
         "export": "json"
     }
     # Limite de résultats par requête
@@ -72,6 +72,9 @@ def fetch_and_process_pm10_data():
 
     # Vérifier si les colonnes existent dans le DataFrame
     colonnes_a_convertir = ['code_commune', 'departement_code', 'code_polluant']
+
+    # Convertir les valeurs de la colonne 'nom_commune' en minuscules et supprimer les accents
+    dfPM10['nom_commune'] = dfPM10['nom_commune'].apply(lambda x: unidecode(x).lower())
 
     # Convertir les colonnes en int64
     for col in colonnes_a_convertir:

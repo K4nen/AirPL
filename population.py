@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+from unidecode import unidecode
 
 def fetch_and_process_population_data(base_url, limit=100):
     offset = 0
@@ -28,6 +29,9 @@ def fetch_and_process_population_data(base_url, limit=100):
     print(f"Total records retrieved: {len(dfPopulation)}")
 
     dfPopulation = dfPopulation.drop(columns=['geo_shape', 'geo_point_2d'], errors='ignore')
+
+    # Convertir les valeurs de la colonne 'nom_commune' en minuscules et supprimer les accents
+    dfPopulation['nom_de_la_commune'] = dfPopulation['nom_de_la_commune'].apply(lambda x: unidecode(x).lower())
 
     colonnes_a_convertir = ['code_departement', 'code_arrondissement', 'code_canton', 'code_commune']
     for col in colonnes_a_convertir:

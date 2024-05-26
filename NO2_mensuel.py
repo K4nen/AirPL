@@ -5,14 +5,14 @@ import seaborn as sns
 from unidecode import unidecode
 
 
-def fetch_and_process_no2_data():
+def fetch_and_process_no2_mensuel_data():
     # URL de base
-    url = "https://data.airpl.org/api/v1/mesure/horaire/"
+    url = "https://data.airpl.org/api/v1/mesure/mensuelle/"
 
     # Paramètres de base de la requête
     base_params = {
         "code_configuration_de_mesure__code_point_de_prelevement__code_polluant": "03",
-        "date_heure_tu__range": "2024-1-1,2024-3-31 23:00:00",
+        "date_heure_tu__range": "2024-1-1,2024-3-31",
         "export": "json"
     }
     # Limite de résultats par requête
@@ -53,13 +53,13 @@ def fetch_and_process_no2_data():
     print(f"Total records retrieved: {len(dfNO2)}")
 
     # Sauvegarder le DataFrame pour utilisation ultérieure
-    dfNO2.to_pickle('PM10.pkl')
+    dfNO2.to_pickle('NO2.pkl')
 
     # Afficher les premières lignes du DataFrame
     print(dfNO2.head())
 
     # Charger le DataFrame depuis le fichier sauvegardé
-    dfNO2 = pd.read_pickle('PM10.pkl')
+    dfNO2 = pd.read_pickle('NO2.pkl')
 
     # Afficher les types de chaque colonne
     print(dfNO2.dtypes)
@@ -68,14 +68,13 @@ def fetch_and_process_no2_data():
     dfNO2.dropna(subset=['valeur', 'valeur_originale'], inplace=True)
 
     # Supprimer les lignes comportant des valeurs négatives dans les colonnes "valeur" et "valeur_originale"
-
-    # Convertir les valeurs de la colonne 'nom_commune' en minuscules et supprimer les accents
-    dfNO2['nom_commune'] = dfNO2['nom_commune'].apply(lambda x: unidecode(x).lower())
-
     dfNO2 = dfNO2[(dfNO2['valeur'] >= 0) & (dfNO2['valeur_originale'] >= 0)]
 
     # Vérifier si les colonnes existent dans le DataFrame
     colonnes_a_convertir = ['code_commune', 'departement_code', 'code_polluant']
+
+    # Convertir les valeurs de la colonne 'nom_commune' en minuscules et supprimer les accents
+    dfNO2['nom_commune'] = dfNO2['nom_commune'].apply(lambda x: unidecode(x).lower())
 
     # Convertir les colonnes en int64
     for col in colonnes_a_convertir:
